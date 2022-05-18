@@ -11,14 +11,6 @@ public class Game {
         String playerInput;
         boolean play = true;
 
-//        String s = input.nextLine();
-//        int a = Integer.parseInt(s.substring(0, s.indexOf(',')));
-//        int b = Integer.parseInt(s.substring(s.indexOf(',')+1, s.indexOf(' ')));
-//        char c = s.charAt(s.indexOf(' ')+1);
-//        System.out.println(a);
-//        System.out.println(b);
-//        System.out.println(c);
-
         System.out.println("Welcome to Minesweeper!");
         while (play)
         {
