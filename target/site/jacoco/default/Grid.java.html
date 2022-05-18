@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Grid.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Minesweeper</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Grid.java</span></div><h1>Grid.java</h1><pre class="source lang-java linenums">import java.util.Random;
+
+public class Grid {
+    Tile[][] thisGrid;
+    int gridSize;
+<span class="pc" id="L6">    String horizontalGridNumbering = &quot;    &quot;;</span>
+    int nBombs;
+    int nBombsRemain;//used to keep count of active bombs/flags down
+    int nTilesRemain; //amount of safe tiles remaining
+
+<span class="nc" id="L11">    public Grid(){};</span>
+    public Grid(int gridSize, int nBombs)
+<span class="fc" id="L13">    {</span>
+<span class="fc" id="L14">        thisGrid = new Tile[gridSize][gridSize];</span>
+<span class="fc" id="L15">        this.gridSize = gridSize;</span>
+<span class="fc" id="L16">        this.nBombs = nBombs;</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        for (int i = 0; i &lt; gridSize; i++)</span>
+        {
+<span class="fc" id="L19">            horizontalGridNumbering += (i + &quot;  &quot;).substring(0, 3);</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">            for (int j = 0; j &lt; gridSize; j++)</span>
+            {
+<span class="fc" id="L22">                thisGrid[i][j] = new Tile(this);</span>
+            }
+        }
+<span class="fc" id="L25">        Random rand = new Random();</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        for (int i = 0; i &lt; nBombs; i++)</span>
+        {
+<span class="fc" id="L28">            int h = rand.nextInt(gridSize);</span>
+<span class="fc" id="L29">            int v = rand.nextInt(gridSize);</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">            if (!thisGrid[v][h].SetBomb())</span>
+            {
+<span class="fc" id="L32">                i--; //Ensures the loop will generate the correct amount of bombs if we skip this iteration</span>
+            }
+        }
+<span class="fc" id="L35">        nTilesRemain = gridSize*gridSize - nBombs;</span>
+<span class="fc" id="L36">        nBombsRemain = nBombs;</span>
+<span class="fc" id="L37">    }</span>
+
+    public void DisplayGrid()
+    {
+<span class="nc" id="L41">        System.out.println(horizontalGridNumbering+&quot;\n&quot;);</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        for (int i = 0; i &lt; gridSize; i++)</span>
+        {
+<span class="nc" id="L44">            String row = i + &quot;   &quot;;</span>
+<span class="nc" id="L45">            row = row.substring(0, Math.min(row.length(), 4));</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            for (int j = 0; j &lt; gridSize; j++)</span>
+            {
+<span class="nc" id="L48">                row += thisGrid[j][i].displayChar + &quot;  &quot;;</span>
+            }
+<span class="nc" id="L50">            System.out.println(row);</span>
+        }
+<span class="nc" id="L52">    }</span>
+
+    public void TileFlagged(int h, int v)
+    {
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        if (thisGrid[v][h].displayChar == 'F')</span>
+        {
+<span class="nc" id="L58">            thisGrid[v][h].UpdateTile('*');</span>
+<span class="nc" id="L59">            nBombsRemain++;</span>
+        }
+        else
+        {
+<span class="nc" id="L63">            thisGrid[v][h].UpdateTile('F');</span>
+<span class="nc" id="L64">            nBombsRemain--;</span>
+        }
+<span class="nc" id="L66">    }</span>
+
+    //Return false if is a bomb
+    public boolean TileClicked(int h, int v)
+    {
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (!CheckBounds(v,h)) return true;</span>
+<span class="nc bnc" id="L72" title="All 4 branches missed.">        if (thisGrid[v][h].isChecked() || !thisGrid[v][h].isLive) return true;</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (thisGrid[v][h].isBomb)</span>
+        {
+<span class="nc" id="L75">            thisGrid[v][h].displayChar = 'B';</span>
+<span class="nc" id="L76">            return false;</span>
+        }
+<span class="nc" id="L78">        int bombCount = 0; //Check all adjacent tiles</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        bombCount += CheckBomb(h+1,v) ? 1 : 0; //increments count if there is a bomb</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        bombCount += CheckBomb(h+1,v-1) ? 1 : 0;</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        bombCount += CheckBomb(h+1,v+1) ? 1 : 0;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        bombCount += CheckBomb(h-1,v) ? 1 : 0;</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        bombCount += CheckBomb(h-1,v+1) ? 1 : 0;</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        bombCount += CheckBomb(h-1,v-1) ? 1 : 0;</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        bombCount += CheckBomb(h,v+1) ? 1 : 0;</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        bombCount += CheckBomb(h,v-1) ? 1 : 0;</span>
+
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (bombCount &gt; 0)</span>
+        {
+<span class="nc" id="L90">            thisGrid[v][h].UpdateTile( (char)(bombCount + '0') );</span>
+        }
+        else
+        {
+<span class="nc" id="L94">            thisGrid[v][h].UpdateTile(' ');</span>
+
+            //if there are no bombs on this tile expand to the adjacent tiles
+<span class="nc" id="L97">            TileClicked(h+1, v);</span>
+<span class="nc" id="L98">            TileClicked(h+1, v-1);</span>
+<span class="nc" id="L99">            TileClicked(h+1, v+1);</span>
+<span class="nc" id="L100">            TileClicked(h-1, v);</span>
+<span class="nc" id="L101">            TileClicked(h-1, v+1);</span>
+<span class="nc" id="L102">            TileClicked(h-1, v-1);</span>
+<span class="nc" id="L103">            TileClicked(h, v-1);</span>
+<span class="nc" id="L104">            TileClicked(h, v+1);</span>
+        }
+<span class="nc" id="L106">        return true;</span>
+    }
+
+    //Return true if there is a bomb, false if not or invalid tile/non-live tile
+    public boolean CheckBomb(int h, int v)
+    {
+<span class="nc bnc" id="L112" title="All 4 branches missed.">        if (CheckBounds(v,h) &amp;&amp; thisGrid[v][h].isLive)</span>
+        {
+<span class="nc" id="L114">            return thisGrid[v][h].isBomb;</span>
+        }
+<span class="nc" id="L116">        return false;</span>
+    }
+    public boolean CheckBounds(int h, int v)
+    {
+<span class="nc bnc" id="L120" title="All 8 branches missed.">        return h &gt;= 0 &amp;&amp; h &lt; gridSize &amp;&amp; v &gt;= 0 &amp;&amp; v &lt; gridSize;</span>
+    }
+
+    public void resetChecked()
+    {
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        for (int i = 0; i &lt; gridSize; i++)</span>
+        {
+<span class="nc bnc" id="L127" title="All 2 branches missed.">            for (int j = 0; j &lt; gridSize; j++)</span>
+            {
+<span class="nc" id="L129">                thisGrid[j][i].isChecked = false;</span>
+            }
+        }
+<span class="nc" id="L132">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

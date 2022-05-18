@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Minesweeper</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Tile.java</span></div><h1>Tile.java</h1><pre class="source lang-java linenums">public class Tile {
+<span class="fc" id="L2">    char displayChar = '*';</span>
+<span class="fc" id="L3">    boolean isBomb = false;</span>
+<span class="fc" id="L4">    boolean isLive = true;</span>
+<span class="fc" id="L5">    boolean isChecked = false; //Has this tile been checked during a turn? Stops a tile being checked over and over again when there are no bombs around a clicked tile</span>
+    Grid myGrid;
+
+    public Tile(Grid myGrid)
+<span class="fc" id="L9">    {</span>
+<span class="fc" id="L10">        this.myGrid = myGrid;</span>
+<span class="fc" id="L11">    }</span>
+
+    public boolean SetBomb()
+    {
+<span class="fc bfc" id="L15" title="All 2 branches covered.">        if (isBomb) return false;</span>
+<span class="fc" id="L16">        isBomb = true;</span>
+<span class="fc" id="L17">        return true;</span>
+    }
+
+    public void UpdateTile(char newDisplay)
+    {
+<span class="nc" id="L22">        displayChar = newDisplay;</span>
+<span class="nc" id="L23">        isLive = false;</span>
+<span class="nc bnc" id="L24" title="All 4 branches missed.">        if (newDisplay == 'F' || newDisplay == '*')</span>
+        {
+<span class="nc" id="L26">            isLive = true;</span>
+        }
+        else
+        {//one less live tile
+<span class="nc" id="L30">            myGrid.nTilesRemain--;</span>
+        }
+<span class="nc" id="L32">    }</span>
+
+    public boolean isChecked() {
+<span class="nc" id="L35">        return isChecked;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

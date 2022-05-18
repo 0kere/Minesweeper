@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Game.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Minesweeper</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Game.java</span></div><h1>Game.java</h1><pre class="source lang-java linenums">import java.util.Scanner;
+
+<span class="nc" id="L3">public class Game {</span>
+    public static void main(String[] args) {
+<span class="nc" id="L5">        String ANSI_RED = &quot;\u001B[31m&quot;;</span>
+<span class="nc" id="L6">        String ANSI_GREEN = &quot;\u001B[32m&quot;;</span>
+<span class="nc" id="L7">        String ANSI_RESET = &quot;\u001B[0m&quot;; //Used to color text in terminal</span>
+
+<span class="nc" id="L9">        Grid grid = new Grid();</span>
+<span class="nc" id="L10">        Scanner input = new Scanner(System.in);</span>
+        String playerInput;
+<span class="nc" id="L12">        boolean play = true;</span>
+
+<span class="nc" id="L14">        System.out.println(&quot;Welcome to Minesweeper!&quot;);</span>
+<span class="nc bnc" id="L15" title="All 2 branches missed.">        while (play)</span>
+        {
+<span class="nc" id="L17">            boolean inGame = false;</span>
+            //Difficulty select
+<span class="nc" id="L19">            System.out.println(&quot;\nWhat difficulty would you like to play? \n\tb - Beginner\n\ti - Intermediate\n\te - Expert&quot;);</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">            while (!inGame)</span>
+            {
+<span class="nc bnc" id="L22" title="All 4 branches missed.">                switch (input.nextLine())</span>
+                {
+<span class="nc" id="L24">                    case &quot;b&quot;: grid = new Grid(9,10);</span>
+<span class="nc" id="L25">                        inGame = true;</span>
+<span class="nc" id="L26">                        break;</span>
+<span class="nc" id="L27">                    case &quot;i&quot;: grid = new Grid(16,40);</span>
+<span class="nc" id="L28">                        inGame = true;</span>
+<span class="nc" id="L29">                        break;</span>
+<span class="nc" id="L30">                    case &quot;e&quot;: grid = new Grid(22, 99);</span>
+<span class="nc" id="L31">                        inGame = true;</span>
+<span class="nc" id="L32">                        break;</span>
+<span class="nc" id="L33">                    default: System.out.println(&quot;Please enter a single character of either b, i or e&quot;);</span>
+                        break;
+<span class="nc" id="L35">                }</span>
+            }
+            //Main Game loop
+<span class="nc bnc" id="L38" title="All 2 branches missed.">            while (inGame)</span>
+            {
+<span class="nc" id="L40">                System.out.println(&quot;Mines Remaining: &quot;+grid.nBombsRemain);</span>
+<span class="nc" id="L41">                grid.DisplayGrid();</span>
+<span class="nc" id="L42">                System.out.println(&quot;\n* - live tile\nempty - not live and no bombs\n1-5 - 1-5 live mine neighbours\nF - flagged tile&quot;);</span>
+<span class="nc" id="L43">                System.out.println(&quot;\nInput next grid coord (h,v) followed by C to click the tile or F to flag/un-flag the tile. E.g. 0,0 C&quot;);</span>
+                //Handle input
+<span class="nc" id="L45">                playerInput = input.nextLine();</span>
+<span class="nc" id="L46">                playerInput = playerInput.toUpperCase();</span>
+<span class="nc" id="L47">                int h = Integer.parseInt(playerInput.substring(0, playerInput.indexOf(',')));;</span>
+<span class="nc" id="L48">                int v = Integer.parseInt(playerInput.substring(playerInput.indexOf(',')+1, playerInput.indexOf(' ')));</span>
+<span class="nc bnc" id="L49" title="All 4 branches missed.">                if (grid.CheckBounds(h,v) &amp;&amp; grid.thisGrid[h][v].isLive)</span>
+                {//Valid coords
+<span class="nc" id="L51">                    char inputType = playerInput.charAt(playerInput.indexOf(' ')+1);</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">                    if (inputType == 'F')</span>
+                    {
+<span class="nc" id="L54">                        grid.TileFlagged(v,h);</span>
+                    }
+<span class="nc bnc" id="L56" title="All 2 branches missed.">                    else if (inputType == 'C')</span>
+                    {
+<span class="nc bnc" id="L58" title="All 2 branches missed.">                        if (!grid.TileClicked(v,h))</span>
+                        {//Bomb has been clicked
+<span class="nc" id="L60">                            inGame = false;</span>
+<span class="nc" id="L61">                            grid.DisplayGrid();</span>
+<span class="nc" id="L62">                            System.out.println(ANSI_RED + &quot;\nGame Over!&quot; + ANSI_RESET);</span>
+                        }
+                        else
+                        {
+                            //Check if player has won
+<span class="nc bnc" id="L67" title="All 2 branches missed.">                            if (grid.nTilesRemain == 0)</span>
+                            {
+<span class="nc" id="L69">                                inGame = false;</span>
+<span class="nc" id="L70">                                grid.DisplayGrid();</span>
+<span class="nc" id="L71">                                System.out.println(ANSI_GREEN + &quot;All mines swept!&quot; + ANSI_RESET);</span>
+                            }
+                        }
+                    }
+                    else
+                    {
+<span class="nc" id="L77">                        System.out.println(&quot;Invalid input type. use C or F&quot;);</span>
+                    }
+<span class="nc" id="L79">                }</span>
+                else
+                {
+
+<span class="nc" id="L83">                    System.out.println(ANSI_RED + &quot;Invalid tile given&quot; + ANSI_RESET);</span>
+                }
+<span class="nc" id="L85">            }</span>
+            //Game over &amp; play again
+<span class="nc" id="L87">            System.out.println(&quot;Would you like to play again? (y/n)&quot;);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            if (input.nextLine() == &quot;n&quot;)</span>
+            {
+<span class="nc" id="L90">                play = false;</span>
+            }
+            else
+            {
+<span class="nc" id="L94">                System.out.println(&quot;New Game!&quot;);</span>
+            }
+<span class="nc" id="L96">        }</span>
+<span class="nc" id="L97">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
